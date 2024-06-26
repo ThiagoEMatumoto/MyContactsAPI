@@ -13,17 +13,17 @@ class ContactController {
   }
 
   async index(request, response) {
-    const contacts = await ContactRepository.findAll()
+    const contacts = await ContactRepository.findAll();
     response.json(contacts);
   }
 
   async show(request, response) {
     const { id } = request.params;
-    const contact = await ContactRepository.findAll()
+    const contact = await ContactRepository.findById(id);
     if (contact) {
       response.json(contact);
     } else {
-      response.status(404).json({ error: 'Contact not found' });
+      response.status(404).json({ error: "Contact not found" });
     }
   }
 
@@ -37,25 +37,27 @@ class ContactController {
   async update(request, response) {
     const { id } = request.params;
     const { name, phone, email } = request.body;
-    const contactIndex = this.contacts.findIndex(contact => contact.id === parseInt(id));
+    const contactIndex = this.contacts.findIndex(
+      (contact) => contact.id === parseInt(id)
+    );
     if (contactIndex !== -1) {
       this.contacts[contactIndex] = { id: parseInt(id), name, phone, email };
       response.json(this.contacts[contactIndex]);
     } else {
-      response.status(404).json({ error: 'Contact not found' });
+      response.status(404).json({ error: "Contact not found" });
     }
   }
 
   async delete(request, response) {
     const { id } = request.params;
-    const contactIndex = this.contacts.findIndex(contact => contact.id === parseInt(id));
-    if (contactIndex !== -1) {
-      const removedContact = this.contacts.splice(contactIndex, 1);
-      response.json(removedContact[0]);
+    const contact = await ContactRepository.findById(id);
+    if (contact) {
+      await ContactRepository.delete(id);
+      response.sendStatus(204);
     } else {
-      response.status(404).json({ error: 'Contact not found' });
+      response.status(404).json({ error: "Contact not found" });
     }
   }
 }
 
-export default new ContactController()
+export default new ContactController();
