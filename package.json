@@ -1,0 +1,22 @@
+{
+  "name": "MyContactsAPI",
+  "version": "1.0.0",
+  "description": "API to listen contacts",
+  "main": "src/index.js",
+  "author": "ThiagoEMatumoto",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "npx nodemon src/index.js"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.5.0",
+    "eslint": "9.x",
+    "globals": "^15.6.0",
+    "nodemon": "^3.1.4"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "uuid": "^10.0.0"
+  }
+}
