@@ -1,17 +1,6 @@
 import ContactRepository from "../repositories/ContactRepository.js";
 
 class ContactController {
-  constructor() {
-    this.contacts = [];
-    this.nextId = 1;
-
-    this.index = this.index.bind(this);
-    this.show = this.show.bind(this);
-    this.store = this.store.bind(this);
-    this.update = this.update.bind(this);
-    this.delete = this.delete.bind(this);
-  }
-
   async index(request, response) {
     const contacts = await ContactRepository.findAll();
     response.json(contacts);
@@ -31,12 +20,24 @@ class ContactController {
     const { name, email, phone, category_id } = request.body;
     const contactExists = await ContactRepository.findByEmail(email);
 
+    if (!name) {
+      return response.status(400).json({ error: "Name is required" });
+    }
+    if (!phone) {
+      return response.status(400).json({ error: "Phone is required" });
+    }
+    if (!email) {
+      return response.status(400).json({ error: "Email is required" });
+    }
+    if (!category_id) {
+      return response.status(400).json({ error: "Category id is required" });
+    }
     if (contactExists) {
       return response
         .status(400)
-        .json({ error: "this e-mail is already been taken" });
+        .json({ error: "this e-mail is already in use" });
     }
-    const newContact = ContactRepository.create(
+    const newContact = await ContactRepository.create(
       name,
       email,
       phone,
@@ -47,16 +48,26 @@ class ContactController {
 
   async update(request, response) {
     const { id } = request.params;
-    const { name, phone, email } = request.body;
-    const contactIndex = this.contacts.findIndex(
-      (contact) => contact.id === parseInt(id)
-    );
-    if (contactIndex !== -1) {
-      this.contacts[contactIndex] = { id: parseInt(id), name, phone, email };
-      response.json(this.contacts[contactIndex]);
-    } else {
-      response.status(404).json({ error: "Contact not found" });
+    const { name, email, phone, category_id } = request.body;
+
+    const contactExists = await ContactRepository.findById(id);
+    const contactEmailExists = await ContactRepository.findByEmail(email);
+
+    if (!name) {
+      return response.status(400).json({ error: "Name is required" });
     }
+    if (contactExists && contactEmailExists.id !== id) {
+      return response
+        .status(400)
+        .json({ error: "this e-mail is already in use" });
+    }
+    const contact = await ContactRepository.update(id, {
+      name,
+      email,
+      phone,
+      category_id,
+    });
+    response.status(201).json(contact);
   }
 
   async delete(request, response) {

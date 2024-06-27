@@ -23,8 +23,8 @@ Nesta forma, você está passando uma função anônima (arrow function) como o 
 router.get("/contacts", () => ContactController.index);
 */
 router.get("/contacts/:id", ContactController.show);
+router.delete("/contacts/:id", ContactController.delete);
 router.post("/contacts", ContactController.store);
-router.put("/contacts:id", ContactController.update);
-router.delete("/contacts:id", ContactController.delete);
+router.put("/contacts/:id", ContactController.update);
 
 export default router;

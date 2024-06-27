@@ -44,8 +44,7 @@ class ContactRepository {
   }
   delete(id) {
     return new Promise((resolve) => {
-      contacts = contacts.filter((contact) => contact.id !== id);
-      resolve();
+      resolve((contacts = contacts.filter((contact) => contact.id !== id)));
     });
   }
   findByEmail(email) {
@@ -64,6 +63,21 @@ class ContactRepository {
       };
       contacts.push(newContact);
       resolve(newContact);
+    });
+  }
+  update(id, { name, phone, email, category_id }) {
+    return new Promise((resolve) => {
+      const updateContact = {
+        id,
+        name,
+        email,
+        phone,
+        category_id,
+      };
+      contacts = contacts.map((contact) =>
+        contact.id === id ? updateContact : contact
+      );
+      resolve(updateContact);
     });
   }
 }
