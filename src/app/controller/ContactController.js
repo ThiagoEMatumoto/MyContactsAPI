@@ -28,9 +28,20 @@ class ContactController {
   }
 
   async store(request, response) {
-    const { name, phone, email } = request.body;
-    const newContact = { id: this.nextId++, name, phone, email };
-    this.contacts.push(newContact);
+    const { name, email, phone, category_id } = request.body;
+    const contactExists = await ContactRepository.findByEmail(email);
+
+    if (contactExists) {
+      return response
+        .status(400)
+        .json({ error: "this e-mail is already been taken" });
+    }
+    const newContact = ContactRepository.create(
+      name,
+      email,
+      phone,
+      category_id
+    );
     response.status(201).json(newContact);
   }
 
