@@ -1,4 +1,5 @@
 import { v4 } from "uuid";
+import query from "../database/index.js";
 
 let contacts = [
   {
@@ -32,40 +33,48 @@ let contacts = [
 ];
 
 class ContactRepository {
-  findAll() {
+  async findAll() {
     return new Promise((resolve) => {
       resolve(contacts);
     });
   }
-  findById(id) {
+  async findById(id) {
     return new Promise((resolve) => {
       resolve(contacts.find((contact) => contact.id === id));
     });
   }
-  delete(id) {
+  async delete(id) {
     return new Promise((resolve) => {
       resolve((contacts = contacts.filter((contact) => contact.id !== id)));
     });
   }
-  findByEmail(email) {
+  async findByEmail(email) {
     return new Promise((resolve) => {
       resolve(contacts.find((contact) => contact.email === email));
     });
   }
-  create(name, phone, email, category_id) {
-    return new Promise((resolve) => {
-      const newContact = {
-        id: v4(),
-        name: name,
-        email: email,
-        phone: phone,
-        category_id: category_id,
-      };
-      contacts.push(newContact);
-      resolve(newContact);
-    });
+  async create(name, email, phone, category_id) {
+    // return new Promise((resolve) => {
+    //   const newContact = {
+    //     id: v4(),
+    //     name: name,
+    //     email: email,
+    //     phone: phone,
+    //     category_id: category_id,
+    //   };
+    //   contacts.push(newContact);
+    //   resolve(newContact);
+    // });
+    // const row = await query(
+    //   `INSERT INTO contacts(name, email, phone, category_id) VALUES(${name},${email},${phone}, ${category_id})`
+    // );
+    const [row] = await query(
+      `INSERT INTO contacts(name, email, phone, category_id) VALUES($1, $2, $3, $4) RETURNING *`,
+      [name, email, phone, category_id]
+    );
+    return row;
   }
-  update(id, { name, phone, email, category_id }) {
+  async update(id, { name, phone, email, category_id }) {
     return new Promise((resolve) => {
       const updateContact = {
         id,
