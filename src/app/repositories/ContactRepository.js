@@ -34,37 +34,24 @@ let contacts = [
 
 class ContactRepository {
   async findAll() {
-    return new Promise((resolve) => {
-      resolve(contacts);
-    });
+    const table = await query(`SELECT * FROM contacts`);
+    return table;
   }
   async findById(id) {
-    return new Promise((resolve) => {
-      resolve(contacts.find((contact) => contact.id === id));
-    });
+    const [row] = await query(`SELECT * FROM contacts WHERE id = $1`, [id]);
+    return row;
   }
   async delete(id) {
-    return new Promise((resolve) => {
-      resolve((contacts = contacts.filter((contact) => contact.id !== id)));
-    });
+    const [row] = await query(`DELETE FROM contacts WHERE id = $1`, [id]);
+    return row;
   }
   async findByEmail(email) {
-    return new Promise((resolve) => {
-      resolve(contacts.find((contact) => contact.email === email));
-    });
+    const [row] = await query(`SELECT * FROM contacts WHERE email = $1`, [
+      email,
+    ]);
+    return row;
   }
   async create(name, email, phone, category_id) {
-    // return new Promise((resolve) => {
-    //   const newContact = {
-    //     id: v4(),
-    //     name: name,
-    //     email: email,
-    //     phone: phone,
-    //     category_id: category_id,
-    //   };
-    //   contacts.push(newContact);
-    //   resolve(newContact);
-    // });
     // const row = await query(
     //   `INSERT INTO contacts(name, email, phone, category_id) VALUES(${name},${email},${phone}, ${category_id})`
     // );
@@ -75,19 +62,11 @@ class ContactRepository {
     return row;
   }
   async update(id, { name, phone, email, category_id }) {
-    return new Promise((resolve) => {
-      const updateContact = {
-        id,
-        name,
-        email,
-        phone,
-        category_id,
-      };
-      contacts = contacts.map((contact) =>
-        contact.id === id ? updateContact : contact
-      );
-      resolve(updateContact);
-    });
+    const [row] = await query(
+      `UPDATE contacts SET name = $1, email = $2, phone = $3, category_id = $4) RETURNING *`,
+      [name, email, phone, category_id]
+    );
+    return row;
   }
 }
 

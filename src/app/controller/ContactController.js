@@ -56,6 +56,11 @@ class ContactController {
     if (!name) {
       return response.status(400).json({ error: "Name is required" });
     }
+    if (!contactExists) {
+      return response
+        .status(400)
+        .json({ error: "this contact does not exist" });
+    }
     if (contactExists && contactEmailExists.id !== id) {
       return response
         .status(400)
