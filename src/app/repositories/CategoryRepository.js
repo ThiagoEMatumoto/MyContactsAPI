@@ -1,8 +1,11 @@
 import query from "../database/index.js";
 
 class CategoryRepository {
-  async findAll() {
-    const table = await query(`SELECT * FROM categories ORDER BY name ASC`);
+  async findAll(orderBy = "ASC") {
+    const direction = orderBy.toUpperCase() === "DESC" ? "DESC" : "ASC";
+    const table = await query(
+      `SELECT * FROM categories ORDER BY name ${direction}`
+    );
     return table;
   }
   async findById(id) {

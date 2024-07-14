@@ -2,7 +2,8 @@ import CategoryRepository from "../repositories/CategoryRepository.js";
 
 class CategoryController {
   async index(request, response) {
-    const category = await CategoryRepository.findAll();
+    const { orderBy } = request.query;
+    const category = await CategoryRepository.findAll(orderBy);
     response.json(category);
   }
 
