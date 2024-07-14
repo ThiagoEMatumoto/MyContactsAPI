@@ -1,40 +1,8 @@
-import { v4 } from "uuid";
 import query from "../database/index.js";
-
-let contacts = [
-  {
-    id: v4(),
-    name: "Thiago",
-    email: "thiago@gmail.com",
-    phone: "1123456789",
-    category_id: v4(),
-  },
-  {
-    id: v4(),
-    name: "Maria",
-    email: "maria@hotmail.com",
-    phone: "1198765432",
-    category_id: v4(),
-  },
-  {
-    id: v4(),
-    name: "João",
-    email: "joao@yahoo.com",
-    phone: "1134567890",
-    category_id: v4(),
-  },
-  {
-    id: v4(),
-    name: "Ana",
-    email: "ana@outlook.com",
-    phone: "1192345678",
-    category_id: v4(),
-  },
-];
 
 class ContactRepository {
   async findAll() {
-    const table = await query(`SELECT * FROM contacts`);
+    const table = await query(`SELECT * FROM contacts ORDER BY name ASC`);
     return table;
   }
   async findById(id) {

@@ -1,32 +1,8 @@
-import { v4 } from "uuid";
 import query from "../database/index.js";
-
-let category = [
-  {
-    id: v4(),
-    name: "Trabalho",
-  },
-  {
-    id: v4(),
-    name: "Pessoal",
-  },
-  {
-    id: v4(),
-    name: "Clube",
-  },
-  {
-    id: v4(),
-    name: "Clientes",
-  },
-  {
-    id: v4(),
-    name: "Comercial",
-  },
-];
 
 class CategoryRepository {
   async findAll() {
-    const table = await query(`SELECT * FROM categories`);
+    const table = await query(`SELECT * FROM categories ORDER BY name ASC`);
     return table;
   }
   async findById(id) {
