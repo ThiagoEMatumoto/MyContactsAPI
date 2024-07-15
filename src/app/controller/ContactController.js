@@ -3,7 +3,7 @@ import ContactRepository from "../repositories/ContactRepository.js";
 class ContactController {
   async index(request, response) {
     const { orderBy } = request.query;
-    const contacts = await ContactRepository.findAll(orderBy);
+    // const contacts = await ContactRepository.findAll(orderBy);
     response.json(contacts);
   }
 
