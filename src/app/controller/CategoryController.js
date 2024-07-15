@@ -53,7 +53,7 @@ class CategoryController {
       await CategoryRepository.delete(id);
       response.sendStatus(204);
     } else {
-      response.status(404).json({ error: "ategory not found" });
+      response.status(404).json({ error: "Category not found" });
     }
   }
 }

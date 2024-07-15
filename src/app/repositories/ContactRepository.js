@@ -4,20 +4,33 @@ class ContactRepository {
   async findAll(orderBy = "ASC") {
     const direction = orderBy.toUpperCase() === "DESC" ? "DESC" : "ASC";
     const table = await query(
-      `SELECT * FROM contacts ORDER BY name ${direction}`
+      `SELECT contacts.* , categories.name AS category_name
+      FROM contacts
+      LEFT JOIN categories ON categories.id = contacts.category_id
+      ORDER BY contacts.name ${direction}`
     );
     return table;
   }
 
   async findById(id) {
-    const [row] = await query(`SELECT * FROM contacts WHERE id = $1`, [id]);
+    const [row] = await query(
+      `SELECT contacts.* , categories.name AS category_name
+      FROM contacts
+      LEFT JOIN categories ON categories.id = contacts.category_id
+      WHERE contacts.id = $1`,
+      [id]
+    );
     return row;
   }
 
   async findByEmail(email) {
-    const [row] = await query(`SELECT * FROM contacts WHERE email = $1`, [
-      email,
-    ]);
+    const [row] = await query(
+      `SELECT contacts.* , categories.name AS category_name
+      FROM contacts
+      LEFT JOIN categories ON categories.id = contacts.category_id
+      WHERE contacts.email = $1`,
+      [email]
+    );
     return row;
   }
 
@@ -26,7 +39,8 @@ class ContactRepository {
     //   `INSERT INTO contacts(name, email, phone, category_id) VALUES(${name},${email},${phone}, ${category_id})`
     // );
     const [row] = await query(
-      `INSERT INTO contacts(name, email, phone, category_id) VALUES($1, $2, $3, $4) RETURNING *`,
+      `INSERT INTO contacts(name, email, phone, category_id) 
+      VALUES($1, $2, $3, $4) RETURNING *`,
       [name, email, phone, category_id]
     );
     return row;
@@ -34,7 +48,10 @@ class ContactRepository {
 
   async update(id, { name, phone, email, category_id }) {
     const [row] = await query(
-      `UPDATE contacts SET name = $1, email = $2, phone = $3, category_id = $4) WHERE id = $5 RETURNING *`,
+      `UPDATE contacts 
+      SET name = $1, email = $2, phone = $3, category_id = $4)
+      WHERE id = $5
+      RETURNING *`,
       [name, email, phone, category_id, id]
     );
     return row;
